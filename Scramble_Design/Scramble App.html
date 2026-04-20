@@ -1,0 +1,204 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Scramble — Full App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Pacifico&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #ece8dc; min-height: 100vh; }
+  * { box-sizing: border-box; }
+  button { font: inherit; }
+  body {
+    font-family: "Inter", system-ui, sans-serif;
+    background-image:
+      radial-gradient(circle at 0% 0%, rgba(220,200,160,0.4) 0%, transparent 50%),
+      radial-gradient(circle at 100% 100%, rgba(200,220,190,0.4) 0%, transparent 50%),
+      #ece8dc;
+  }
+  .canvas {
+    max-width: 1680px; margin: 0 auto; padding: 44px 32px 80px;
+  }
+  .title-block {
+    text-align: center; margin-bottom: 48px;
+  }
+  .title-block h1 {
+    font-family: "Pacifico", cursive; font-size: 68px; color: #3A7D44; margin: 0 0 4px; line-height: 1;
+  }
+  .title-block .tag {
+    font-family: "Playfair Display", serif; font-style: italic; font-size: 18px; color: #3d4254; margin: 4px 0 0;
+  }
+  .title-block .eyebrow {
+    font-family: "Inter", system-ui; font-size: 11px; font-weight: 700; letter-spacing: 3px; color: #3A7D44;
+    margin-bottom: 10px;
+  }
+  .dashed-sep {
+    height: 1px;
+    background-image: linear-gradient(90deg, #c9b88a 50%, transparent 50%);
+    background-size: 8px 1px;
+    max-width: 220px; margin: 18px auto 0;
+  }
+  .section-label {
+    font-family: "Inter", system-ui; font-size: 11px; font-weight: 700; letter-spacing: 3px; color: #3A7D44;
+    text-align: center; margin: 48px 0 6px;
+  }
+  .section-title {
+    font-family: "Playfair Display", serif; font-size: 28px; font-weight: 700; color: #1a1a2e; text-align: center;
+    margin: 0 0 28px; letter-spacing: -0.3px;
+  }
+  .grid {
+    display: grid; gap: 48px 40px;
+    grid-template-columns: repeat(auto-fill, 410px);
+    justify-content: center;
+  }
+  .cell {
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .cell .num {
+    font-family: "Playfair Display", serif; font-style: italic; font-size: 13px; color: #3A7D44; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase;
+  }
+  .cell .cap {
+    font-family: "Playfair Display", serif; font-size: 17px; color: #1a1a2e; font-weight: 600;
+    margin-top: 3px; margin-bottom: 14px;
+  }
+  .cell .phone-wrap { }
+  .cell .note {
+    font-family: "Playfair Display", serif; font-style: italic; font-size: 13px; color: #5a6377;
+    margin-top: 14px; max-width: 360px; text-align: center; line-height: 1.5;
+  }
+  .legend {
+    max-width: 540px; margin: 0 auto 24px; text-align: center;
+    font-family: "Playfair Display", serif; font-style: italic; font-size: 15px; color: #3d4254; line-height: 1.6;
+  }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="app/design-system.jsx"></script>
+<script type="text/babel" src="app/chrome.jsx"></script>
+<script type="text/babel" src="app/screens-onboarding.jsx"></script>
+<script type="text/babel" src="app/screens-main.jsx"></script>
+<script type="text/babel" src="app/screens-chat-profile.jsx"></script>
+<script type="text/babel" src="app/screens-settings.jsx"></script>
+<script type="text/babel" src="scorecard-intake.jsx"></script>
+
+<script type="text/babel">
+  function Cell({ num, cap, note, children }) {
+    return (
+      <div className="cell">
+        <div className="num">{num}</div>
+        <div className="cap">{cap}</div>
+        <div className="phone-wrap">{children}</div>
+        {note && <div className="note">{note}</div>}
+      </div>
+    );
+  }
+
+  function Section({ eyebrow, title, legend, children }) {
+    return (
+      <div data-screen-label={eyebrow}>
+        <div className="section-label">{eyebrow}</div>
+        <h2 className="section-title">{title}</h2>
+        {legend && <div className="legend">{legend}</div>}
+        <div className="grid">{children}</div>
+      </div>
+    );
+  }
+
+  function App() {
+    const [activeGolfer, setActiveGolfer] = React.useState(GOLFERS[0]);
+    const noop = () => {};
+    return (
+      <div className="canvas">
+
+        <div className="title-block">
+          <div className="eyebrow">A SHARED DESIGN SYSTEM · PAPER SCORECARD VIBES</div>
+          <h1>Scramble</h1>
+          <div className="tag">Find a fourth. Play more golf. A complete app tour.</div>
+          <div className="dashed-sep"/>
+        </div>
+
+        <Section eyebrow="01 · ARRIVAL" title="Onboarding" legend="Welcome mat, phone verification, and the GPS ask. Every step keeps the paper-scorecard vibe — small caps eyebrows, Playfair italic copy, dashed borders.">
+          <Cell num="01" cap="Home" note="Full-bleed course photo. White cart logo + Scramble wordmark centered. Ghost Create Account button.">
+            <HomeScreen/>
+          </Cell>
+          <Cell num="02" cap="Phone entry" note="The number sits on a dashed signature line, like you're filling out a scorecard.">
+            <PhoneScreen/>
+          </Cell>
+          <Cell num="03" cap="OTP code" note="Six boxes, each a little scorecard cell. Helpful tip card below.">
+            <CodeScreen/>
+          </Cell>
+          <Cell num="04" cap="Location" note="Stylized map with fairway-blob courses. You-are-here pulsing dot.">
+            <GPSScreen/>
+          </Cell>
+        </Section>
+
+        <Section eyebrow="02 · SIGN IN" title="Scorecard intake" legend="The existing prototype — still tappable. First name, age, gender, handicap, home course. Signature writes itself as you type.">
+          <Cell num="05" cap="Fill out the card" note="Tap any row to edit. Auto-advances when each field's done.">
+            <ScorecardIntake/>
+          </Cell>
+        </Section>
+
+        <Section eyebrow="03 · THE PRODUCT" title="Find your foursome" legend="Three curated matches a week — no swiping. Tap into a golfer's card, strike up a chat, lock in the tee time.">
+          <Cell num="06" cap="This week's matches" note="Three golfers, matched on location and handicap. Each gets their own mini-scorecard with the course they call home.">
+            <LineupScreen onOpenGolfer={setActiveGolfer} onTab={noop}/>
+          </Cell>
+          <Cell num="07" cap="Golfer profile" note="Hero course illustration, scorecard stats strip, prompt answered in Pacifico script.">
+            <GolferScreen golfer={activeGolfer} onBack={noop} onMessage={noop}/>
+          </Cell>
+          <Cell num="08" cap="Foursome" note="A real scorecard header: names, handicaps, walk/cart. Tee time + cost card.">
+            <FoursomeScreen onTab={noop}/>
+          </Cell>
+        </Section>
+
+        <Section eyebrow="04 · THE CLUBHOUSE" title="Messages">
+          <Cell num="09" cap="Messages list" note="Unread rows get a subtle green wash and a bold pill count.">
+            <MessagesScreen onOpenDM={setActiveGolfer} onTab={noop}/>
+          </Cell>
+          <Cell num="10" cap="DM with tee-time card" note="Normal bubbles plus a special 'tee time invite' card — accept right from chat.">
+            <DMScreen golfer={activeGolfer} onBack={noop}/>
+          </Cell>
+        </Section>
+
+        <Section eyebrow="05 · YOU" title="Profile & settings" legend="Your member card looks like it came from the pro shop.">
+          <Cell num="11" cap="Your profile" note="Member card up top. Recent rounds show your score in a little scorecard box.">
+            <ProfileScreen onTab={noop} onNav={noop}/>
+          </Cell>
+          <Cell num="12" cap="Settings" note="Sections separated by dashed lines + small-caps eyebrows. Golf-club naming ('Starter's Shack').">
+            <SettingsScreen onBack={noop} onNav={noop}/>
+          </Cell>
+          <Cell num="13" cap="Preferences" note="Play style / pace / what-I-bring as pills. Day-of-week picker.">
+            <PreferencesScreen onBack={noop}/>
+          </Cell>
+          <Cell num="14" cap="Account" note="Sign-in, privacy, clubhouse exit — all rows consistent with the rest of the app.">
+            <AccountScreen onBack={noop} onNav={noop}/>
+          </Cell>
+          <Cell num="15" cap="Change phone" note="Same scorecard treatment for the most boring flow in the app.">
+            <ChangePhoneScreen onBack={noop}/>
+          </Cell>
+        </Section>
+
+        <div style={{textAlign:'center', marginTop:80, opacity:0.5}}>
+          <div style={{fontFamily:'"Pacifico", cursive', fontSize:32, color:'#3A7D44'}}>Scramble</div>
+          <div style={{fontFamily:'"Inter", system-ui', fontSize:10, fontWeight:700, letterSpacing:3, color:'#5a6377', marginTop:4}}>
+            15 SCREENS · ONE SHARED LANGUAGE
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Give the Babel scripts time to load
+  setTimeout(() => {
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  }, 100);
+</script>
+
+</body>
+</html>

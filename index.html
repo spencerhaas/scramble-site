@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scramble — Connecting Golfers</title>
+  <meta name="description" content="Find your golf crew. Scramble matches you with like-minded golfers based on your play style, pace, and preferences. Download now on iOS.">
+  <meta property="og:title" content="Scramble — Connecting Golfers">
+  <meta property="og:description" content="Find your golf crew. Get matched with golfers who play like you.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://scramblegolf.info">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Pacifico&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --green: #3A7D44;
+      --green-dark: #2d6335;
+      --green-light: rgba(58, 125, 68, 0.08);
+      --text: #1a1a2e;
+      --text-secondary: #5a6377;
+      --text-muted: #9ca5b4;
+      --white: #ffffff;
+      --off-white: #f7f8fa;
+      --border: #dfe3ea;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ─────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: 'Pacifico', cursive;
+      font-size: 24px;
+      color: var(--green);
+      text-decoration: none;
+    }
+
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--green); }
+
+    .nav-cta {
+      background: var(--green) !important;
+      color: var(--white) !important;
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-family: 'Playfair Display', serif !important;
+      font-weight: 600 !important;
+      font-size: 14px !important;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--green-dark) !important; }
+
+    .nav-hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text);
+      margin: 5px 0;
+      border-radius: 2px;
+      transition: 0.3s;
+    }
+
+    /* ── Hero ─────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f0f7f1 0%, var(--white) 50%, #f0f7f1 100%);
+    }
+
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 120px 24px 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .hero-content { z-index: 2; }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--green-light);
+      color: var(--green);
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 6px 16px;
+      border-radius: 50px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: clamp(36px, 5vw, 56px);
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 span { color: var(--green); }
+
+    .hero-sub {
+      font-size: 18px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 36px;
+      max-width: 480px;
+    }
+
+    .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--green);
+      color: var(--white);
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 16px;
+      padding: 14px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--green-dark); transform: translateY(-1px); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      color: var(--text);
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 16px;
+      padding: 14px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      border: 1.5px solid var(--border);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--green); transform: translateY(-1px); }
+
+    .store-icon { width: 20px; height: 20px; }
+
+    /* Hero phone mockup */
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+    }
+
+    .phone-mockup {
+      width: 280px;
+      height: 560px;
+      background: var(--text);
+      border-radius: 40px;
+      padding: 12px;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 30px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .phone-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .phone-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px 20px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      text-align: center;
+    }
+
+    .phone-overlay-logo {
+      font-family: 'Pacifico', cursive;
+      font-size: 28px;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .phone-overlay-sub {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 28px;
+      background: var(--text);
+      border-radius: 14px;
+      z-index: 5;
+    }
+
+    /* ── Section base ────────────────────────────────── */
+    section { padding: 100px 24px; }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: clamp(28px, 4vw, 40px);
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+      font-size: 17px;
+      color: var(--text-secondary);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    /* ── How It Works ────────────────────────────────── */
+    .how-it-works { background: var(--off-white); }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 60px;
+    }
+
+    .step {
+      text-align: center;
+      padding: 40px 28px;
+      background: var(--white);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .step:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.06); }
+
+    .step-number {
+      width: 52px;
+      height: 52px;
+      background: var(--green);
+      color: var(--white);
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .step h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .step p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ── Features ─────────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+      margin-top: 60px;
+    }
+
+    .feature-card {
+      padding: 36px;
+      background: var(--off-white);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      transition: transform 0.2s;
+    }
+    .feature-card:hover { transform: translateY(-2px); }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--green-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .feature-icon svg { width: 24px; height: 24px; }
+
+    .feature-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 19px;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ── Testimonial / Social proof ───────────────────── */
+    .social-proof {
+      background: var(--green);
+      color: var(--white);
+      text-align: center;
+    }
+
+    .social-proof .section-label { color: rgba(255,255,255,0.7); }
+    .social-proof .section-title { color: var(--white); }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 50px;
+    }
+
+    .stat h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 44px;
+      margin-bottom: 8px;
+    }
+
+    .stat p {
+      font-size: 15px;
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* ── CTA ──────────────────────────────────────────── */
+    .cta {
+      text-align: center;
+      background: var(--off-white);
+    }
+
+    .cta .section-title { max-width: 600px; margin: 0 auto 16px; }
+    .cta .section-subtitle { max-width: 480px; margin: 0 auto 36px; }
+
+    .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── Footer ───────────────────────────────────────── */
+    footer {
+      padding: 48px 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-logo {
+      font-family: 'Pacifico', cursive;
+      font-size: 20px;
+      color: var(--green);
+    }
+
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--green); }
+
+    .footer-copy {
+      font-size: 13px;
+      color: var(--text-muted);
+      width: 100%;
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    /* ── Responsive ───────────────────────────────────── */
+    @media (max-width: 768px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding-top: 100px;
+        gap: 40px;
+      }
+      .hero-sub { margin: 0 auto 36px; }
+      .hero-buttons { justify-content: center; }
+      .steps { grid-template-columns: 1fr; max-width: 400px; margin: 60px auto 0; }
+      .features-grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr; gap: 32px; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: block; }
+      .phone-mockup { width: 240px; height: 480px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">Scramble</a>
+      <div class="nav-links">
+        <a href="#how-it-works">How It Works</a>
+        <a href="#features">Features</a>
+        <a href="#download" class="nav-cta">Download</a>
+      </div>
+      <button class="nav-hamburger" onclick="document.querySelector('.nav-links').style.display = document.querySelector('.nav-links').style.display === 'flex' ? 'none' : 'flex'">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge">Now available on iOS</div>
+        <h1>Find your <span>golf crew</span></h1>
+        <p class="hero-sub">Scramble matches you with like-minded golfers based on your play style, pace, and preferences. No more solo rounds or mismatched foursomes.</p>
+        <div class="hero-buttons">
+          <a href="#" class="btn-primary">
+            <svg class="store-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            Download for iOS
+          </a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="phone-mockup">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <img src="Scramble_Design/app/home-hero.png" alt="Scramble app home screen">
+            <div class="phone-overlay">
+              <img src="Scramble_Design/app/logo.png" alt="Scramble logo" style="width: 120px; margin-bottom: 4px; filter: brightness(0) invert(1) drop-shadow(0 4px 12px rgba(0,0,0,0.45));">
+              <div class="phone-overlay-logo">Scramble</div>
+              <div class="phone-overlay-sub">Find your golf crew</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="section-inner">
+      <div class="section-label">How It Works</div>
+      <h2 class="section-title">Three steps to your next foursome</h2>
+      <p class="section-subtitle">Scramble makes it easy to find golfers who match your game, schedule, and vibe.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Build Your Profile</h3>
+          <p>Tell us how you play. Your pace, style, preferred tees, betting habits, availability, and what you're looking for in a golf partner.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Get Matched</h3>
+          <p>Each week, Scramble builds your lineup of compatible golfers nearby. Browse profiles, check match scores, and see what you have in common.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Hit the Links</h3>
+          <p>Message your matches, form a foursome, book a tee time, and get out there. It's that simple.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <div class="section-inner">
+      <div class="section-label">Features</div>
+      <h2 class="section-title">Built for golfers, by golfers</h2>
+      <p class="section-subtitle">Everything you need to find your crew and get on the course.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3A7D44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <h3>Smart Matching</h3>
+          <p>Our algorithm considers your play style, pace, handicap, preferred tees, schedule, and 10+ other factors to find golfers you'll actually enjoy playing with.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3A7D44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+          <h3>Messaging & Groups</h3>
+          <p>Chat one-on-one or in your foursome group. Coordinate schedules, talk trash, and plan your next round all in one place.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3A7D44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <h3>Book Tee Times</h3>
+          <p>Search available tee times at courses near you and book directly from the app. Go from matching to the first tee without missing a beat.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3A7D44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </div>
+          <h3>Location-Based</h3>
+          <p>Find golfers in your area and discover courses nearby. Whether you're at home or traveling, Scramble connects you to the local golf scene.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social Proof -->
+  <section class="social-proof">
+    <div class="section-inner">
+      <div class="section-label">The Numbers</div>
+      <h2 class="section-title">Golf is better with the right crew</h2>
+      <div class="stats">
+        <div class="stat">
+          <h3>9,000+</h3>
+          <p>Courses available to book</p>
+        </div>
+        <div class="stat">
+          <h3>10+</h3>
+          <p>Matching factors considered</p>
+        </div>
+        <div class="stat">
+          <h3>100%</h3>
+          <p>Free to use</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta" id="download">
+    <div class="section-inner">
+      <div class="section-label">Get Started</div>
+      <h2 class="section-title">Ready to find your crew?</h2>
+      <p class="section-subtitle">Download Scramble on the App Store and start getting matched with golfers who play like you.</p>
+      <div class="cta-buttons">
+        <a href="#" class="btn-primary">
+          <svg class="store-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          Download for iOS
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">Scramble</div>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="footer-copy">&copy; 2026 Scramble. All rights reserved.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
